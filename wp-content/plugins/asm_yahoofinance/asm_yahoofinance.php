@@ -3,7 +3,7 @@
 /*
  * Plugin Name: ASM Yahoo Finance
  * Plugin URI: https://github.com/asoretmadolell/My-First-WordPress-Plugins
- * Description: A very dumb plugin that asfgadsñoÑIUJHLIKJYUHLIHYK
+ * Description: A very dumb plugin that retrieves currency rates from the web
  * Version: 1.0
  * Author: Soret
  * Author URI: https://github.com/asoretmadolell
