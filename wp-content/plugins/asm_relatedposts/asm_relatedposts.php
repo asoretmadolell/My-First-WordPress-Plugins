@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: ASM Related posts
- * Plugin URI: https://github.com/asoretmadolell
+ * Plugin URI: https://github.com/asoretmadolell/My-First-WordPress-Plugins
  * Description: A very dumb plugin that loads posts from the database.
  * Version: 1.0
  * Author: Soret

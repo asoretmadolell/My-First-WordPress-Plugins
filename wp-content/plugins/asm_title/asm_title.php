@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name: ASM Title
- * Plugin URI: https://github.com/asoretmadolell
+ * Plugin URI: https://github.com/asoretmadolell/My-First-WordPress-Plugins
  * Description: A very dumb plugin that modifies titles.
  * Version: 1.0
  * Author: Soret
