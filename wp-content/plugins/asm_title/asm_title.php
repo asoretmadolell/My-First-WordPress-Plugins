@@ -10,6 +10,7 @@
  * License: GPL2
  */
 
+// http://codex.wordpress.org/Plugin_API/Filter_Reference
 add_filter('the_title', 'asmtitle_title');
 add_filter('the_content', 'asmtitle_content');
 add_filter('list_cats', 'asmtitle_categories');
