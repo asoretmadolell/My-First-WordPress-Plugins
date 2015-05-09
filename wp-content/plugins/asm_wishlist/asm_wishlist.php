@@ -73,3 +73,114 @@ function asmwp_plugin_options()
     </div>
     <?php
 }
+
+// register widgets
+// http://codex.wordpress.org/Widgets_API
+add_action('widgets_init', 'asmwp_widget_init');
+
+function asmwp_widget_init()
+{
+    register_widget( Asmwp_Widget );
+}
+
+/*
+ * Creation of our new widget class
+ */
+class Asmwp_Widget extends WP_Widget
+{
+    // constructor, which will take care of title, description, CSS class, etc
+    function Asmwp_Widget()
+    {
+        $widget_options = array(
+            'classname' => 'asmwp_class', // CSS class
+            'description' => 'Add items to wishlist' // description shown in widgets dashboard
+        );
+        
+        // "$id_base" is the CSS ID
+        // "$name" is the title shown in widgets dashboard
+        // "$widget_options" is the array that we've just defined above
+        $this->WP_Widget('asmwp_id', 'Wishlist');
+    }
+    
+    // widget options form when adding it to a sidebar in the widgets dashboard
+    function form( $instance )
+    {
+        // first thing would be to assign some default values
+        $defaults = array(
+            'title' => 'Wishlist'
+        );
+        
+        // add the defaults into our instance
+        // https://codex.wordpress.org/Function_Reference/wp_parse_args
+        $instance = wp_parse_args( (array)$instance, $defaults );
+        
+        // grab the title that the user entered
+        $title = esc_attr( $instance['title'] );
+        
+        // show the form
+        echo '<p>Title <input class="widefat" name="'.$this->get_field_name('title').'" type="text" value="'.$title.'" /></p>';
+    }
+    
+    // process information entered by the user and save it to the database
+    function update( $new_instance, $old_instance )
+    {
+        $instance = $old_instance;
+        
+        $instance['title'] = strip_tags( $new_instance['title'] );
+        
+        return $instance;
+    }
+    
+    // show widget in post or page
+    function widget( $args, $instance )
+    {
+        // extract "$args" so that the values are available as variables within this scope
+        extract( $args );
+        
+        $title = apply_filters( 'widget_title', $instance['title'] );
+        
+        // show widget only if it's a single post
+        if( is_single() )
+        {
+            echo $before_widget;
+            echo $before_title . $title . $after_title;
+            
+            // print widget content
+            echo '<span id="asmwp_add_wishlist_div"><a id="asmwp_add_wishlist" href="#">Add to wishlist</a></span>';
+            
+            echo $after_widget;
+        }
+    }
+}
+
+// executed immediately after the global WP class object is set up
+// https://codex.wordpress.org/Plugin_API/Action_Reference/wp
+add_action('wp', 'asmwp_init');
+
+/*
+ * Load external files
+ */
+function asmwp_init()
+{
+    // register script for later reference, not load it right away
+    // https://codex.wordpress.org/Function_Reference/wp_register_script
+    // "$handle" is for a unique name to use with "wp_enqueue_script()"
+    // "$src" is for the URL to the script. never hardcore URLs to local scripts
+    // "$deps" is for all the registered scripts that this particular script depends on, or the scripts that must be loaded before this one
+    wp_register_script( 'asmwishlist-js', plugins_url( '/asm_wishlist.js', __FILE__ ), array( 'jquery' ) );
+    
+    wp_enqueue_script( 'jquery' );
+    wp_enqueue_script( 'asmwishlist-js' );
+}
+
+// create our own action by adding the prefix "wp_ajax_"
+// https://codex.wordpress.org/Plugin_API/Action_Reference/wp_ajax_%28action%29
+// http://solislab.com/blog/5-tips-for-using-ajax-in-wordpress/
+add_action( 'wp_ajax_asmwp_add_wishlist', 'asmwp_add_wishlist_process' );
+// if not logged in, use this prefix:  add_action( 'wp_ajax_nopriv_myajax-submit', 'myajax_submit' );
+
+function asmwp_add_wishlist_process()
+{
+    echo 'hello back';
+    exit();
+}
