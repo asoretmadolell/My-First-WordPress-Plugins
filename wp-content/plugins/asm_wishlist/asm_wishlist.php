@@ -146,7 +146,22 @@ class Asmwp_Widget extends WP_Widget
             echo $before_title . $title . $after_title;
             
             // print widget content
-            echo '<span id="asmwp_add_wishlist_div"><a id="asmwp_add_wishlist" href="#">Add to wishlist</a></span>';
+            if( !is_user_logged_in() )
+            {
+                echo 'Please sign in to use this widget';
+            }
+            else
+            {
+                global $post;
+                if( asmwp_has_wishlisted( $post->ID ) )
+                {
+                    echo 'You want this';
+                }
+                else
+                {
+                    echo '<span id="asmwp_add_wishlist_div"><a id="asmwp_add_wishlist" href="#">Add to wishlist</a></span>';
+                }
+            }
             
             echo $after_widget;
         }
@@ -193,6 +208,38 @@ add_action( 'wp_ajax_asmwp_add_wishlist', 'asmwp_add_wishlist_process' );
 
 function asmwp_add_wishlist_process()
 {
-    echo 'hello back from post id: ' . $_POST['postId'];
+    // force it to be an int. it's important to validate your data
+    $post_id = (int)$_POST['postId'];
+    
+    $user = wp_get_current_user();
+    
+    if( !asmwp_has_wishlisted( $post_id ) )
+    {
+        // add metadata to a user's record
+        // https://codex.wordpress.org/Function_Reference/add_user_meta
+        // "$user_id" is for the user to which the metadata corresponds
+        // $meta_key is for the name of the metadata (recommended to add prefix)
+        // $meta_value is for the content itself
+        add_user_meta( $user->ID, 'asm_wanted_posts', $post_id );
+    }
+    
+    echo 'You have added post ' . $post_id . ' to your wishlist';
+    
     exit();
+}
+
+/*
+ * Check if the user has wishlisted
+ */
+function asmwp_has_wishlisted( $post_id )
+{
+    $user = wp_get_current_user();
+    
+    // creates an array with every record that matches the metadata key and the user
+    $values = get_user_meta( $user->ID, 'asm_wanted_posts' );
+    
+    foreach ( $values as $value )
+    {
+        if( $value == $post_id ) { return true; }
+    }
 }

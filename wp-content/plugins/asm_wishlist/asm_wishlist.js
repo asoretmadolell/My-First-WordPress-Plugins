@@ -20,6 +20,7 @@ jQuery( document ).ready( function($)
         // "success" is a callback executed if the request succeeds
         function success( response )
         {
+            $( '#asmwp_add_wishlist' ).html('You want this');
             alert ( response );
         }
         
