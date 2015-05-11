@@ -10,10 +10,12 @@ jQuery( document ).ready( function($)
         var url = document.location.protocol + '//' + host + '/' + dev + '/wp-admin/admin-ajax.php';
         
         // "data" is for the parameters to send
+        /* we decided to fill this array using PHP, in order to access the post ID
         var data = {
             action: 'asmwp_add_wishlist', // the action we created without the prefix (mandatory)
             postId: 100 // this will be the ID of the post in the future
         };
+        */
         
         // "success" is a callback executed if the request succeeds
         function success( response )
@@ -22,7 +24,7 @@ jQuery( document ).ready( function($)
         }
         
         // finally, the ".post" method
-        $.post( url, data, success );
+        $.post( url, MyAjax, success );
     });
     
     // AJAX error handler, called only when an AJAX request completes with an error

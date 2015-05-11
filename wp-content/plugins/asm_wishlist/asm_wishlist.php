@@ -171,6 +171,18 @@ function asmwp_init()
     
     wp_enqueue_script( 'jquery' );
     wp_enqueue_script( 'asmwishlist-js' );
+    
+    global $post;
+    $data = array(
+        'action' => 'asmwp_add_wishlist',
+        'postId' => $post->ID
+    );
+    // make any data available to a script through a JavaScript variable
+    // https://codex.wordpress.org/Function_Reference/wp_localize_script
+    // "$handle" is for the registered script to attach the data to
+    // "$name" is for the name of the variable that will contain the data. it has to be unique
+    // "$data" is for the data itself as a signle or multi dimensional array
+    wp_localize_script( 'asmwishlist-js', 'MyAjax', $data );
 }
 
 // create our own action by adding the prefix "wp_ajax_"
@@ -181,6 +193,6 @@ add_action( 'wp_ajax_asmwp_add_wishlist', 'asmwp_add_wishlist_process' );
 
 function asmwp_add_wishlist_process()
 {
-    echo 'hello back';
+    echo 'hello back from post id: ' . $_POST['postId'];
     exit();
 }
