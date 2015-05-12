@@ -243,3 +243,50 @@ function asmwp_has_wishlisted( $post_id )
         if( $value == $post_id ) { return true; }
     }
 }
+
+// triggered when the dashboard is being initiated, used for adding or removing dashboard widgets
+// https://codex.wordpress.org/Plugin_API/Action_Reference/wp_dashboard_setup
+add_action('wp_dashboard_setup', 'asmwp_create_dashboard_widget');
+
+function asmwp_create_dashboard_widget()
+{
+    // get the title of the wishlist from our settings page. if it isn'st set, use a default title
+    $title = get_option( 'asmwp_dashboard_title' ) ? get_option( 'asmwp_dashboard_title' ) : 'My Wishlist';
+    
+    // adds a new widget to the administration dashboard
+    // https://codex.wordpress.org/Function_Reference/wp_add_dashboard_widget
+    // "$widget_id" is for the identifier of the widget, used mainly for the CSS class
+    // "$widget_name" is for the name that will appear in its heading
+    // "$callback" is for the function that will handle submission of widget options forms
+    wp_add_dashboard_widget( 'asm_wishlist_dashboard', $title, 'asmwp_show_dashboard_widget' );
+}
+
+/*
+ * Show the widget
+ */
+function asmwp_show_dashboard_widget()
+{
+    $user = wp_get_current_user();
+    
+    // creates an array with every record that matches the metadata key and the user
+    $values = get_user_meta( $user->ID, 'asm_wanted_posts' );
+    
+    // get the number of items to show from our settings page, using a default number
+    $limit = (int)get_option( 'asmwp_number_of_items') ? (int)get_option( 'asmwp_number_of_items') : 3;
+    
+    echo '<ul>';
+    
+    foreach( $values as $i => $value )
+    {
+        if( $i == $limit )
+        {
+            break;
+        }
+        
+        $currentPost = get_post( $value );
+        
+        echo '<li>' . $currentPost->post_title . '</li>';
+    }
+    
+    echo '</ul>';
+}
